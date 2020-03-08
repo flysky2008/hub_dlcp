@@ -107,7 +107,7 @@ class Operate(object):
         self.logger.info('correct: {}'.format(correct))
         self.logger.info('recall: {}'.format(recall))
         self.logger.info('precision: {}'.format(precision))
-        if (self.correct < correct):
+        if self.correct < correct:
             self.correct = correct
             saver.save(sess, self.model_path, global_step=step_num)
             projector.visualize_embeddings(tf.summary.FileWriter(self.model_path), projector_config)
@@ -118,14 +118,14 @@ class Operate(object):
         docslen_array = np.array(docslenlist).reshape(-1, 1)
         if not os.path.exists(self.model_path): os.makedirs(self.model_path)
         scalerfile = self.model_path + "/scaler"
-        if (mode == "train"):
+        if mode == "train":
             self.scaler_sentslen = preprocessing.StandardScaler().fit(sentslen_array)
             self.scaler_place = preprocessing.StandardScaler().fit(place_array)
             self.scaler_docslen = preprocessing.StandardScaler().fit(docslen_array)
             pickle.dump(self.scaler_sentslen, open(scalerfile + "_sentslen", 'wb'))
             pickle.dump(self.scaler_place, open(scalerfile + "_place", 'wb'))
             pickle.dump(self.scaler_docslen, open(scalerfile + "_docslen", 'wb'))
-        elif (mode == "test"):
+        elif mode == "test":
             self.scaler_sentslen = pickle.load(open(scalerfile + "_sentslen", 'rb'))
             self.scaler_place = pickle.load(open(scalerfile + "_place", 'rb'))
             self.scaler_docslen = pickle.load(open(scalerfile + "_docslen", 'rb'))
@@ -176,22 +176,22 @@ class Operate(object):
         print("labelss:" + str(predict_labels))
         labelss = []
         predict_labelss = []
-        if (len(labels) == len(predict_labels)):
+        if len(labels) == len(predict_labels):
             for labels_evbatch, predict_labels_evbatch in zip(labels, predict_labels):
                 labelss.extend(labels_evbatch)
                 predict_labelss.extend(predict_labels_evbatch)
             # print("labelss:"+str(len(labelss)))
             # print("predict_labelss:" + str(len(predict_labelss)))
-            if (len(labelss) == len(predict_labelss)):
+            if len(labelss) == len(predict_labelss):
                 score = sum([1 for i, label in enumerate(labelss) if label == predict_labelss[i]]) * 1.0 / len(labelss)
                 tp = sum([1 for i, label in enumerate(labelss) if (label != 0 and label == predict_labelss[i])]) * 1.0
                 tpfn = sum([1 for label in labelss if (label != 0)]) * 1.0
                 tpfp = sum([1 for label in predict_labelss if (label != 0)]) * 1.0
-                if (tpfn != 0):
+                if tpfn != 0:
                     recall = tp / tpfn
                 else:
                     recall = 1
-                if (tpfp != 0):
+                if tpfp != 0:
                     precision = tp / tpfp
                 else:
                     precision = 1

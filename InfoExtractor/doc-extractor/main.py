@@ -12,7 +12,7 @@ from data import read_dictionary, tag2label
 from data_helper import build_vocab_doc
 import time
 from doc_extrator_model import UniDocInfoExtractor
-from classification_model import classification
+from classification_model import Classification
 from Train import Operate
 from Predict import Predict
 
@@ -27,9 +27,9 @@ output_path = conf.get('path_arg', 'output_path')
 optimizer = conf.get('train_arg', 'optimizer')
 lr_pl = float(conf.get('train_arg', 'lr_pl'))
 # graph参数配置
-hanModel_wordEmbedSzie = int(conf.get('graph_arg', 'uniDocModel_wordEmbedSize'))
-hanModel_hiddenSize = int(conf.get('graph_arg', 'uniDocModel_hiddenSize'))
-classModel_hiddenSzie = int(conf.get('graph_arg', 'classModel_hiddenSize'))
+uniDocModel_wordEmbedSize = int(conf.get('graph_arg', 'uniDocModel_wordEmbedSize'))
+uniDocModel_hiddenSize = int(conf.get('graph_arg', 'uniDocModel_hiddenSize'))
+classModel_hiddenSize = int(conf.get('graph_arg', 'classModel_hiddenSize'))
 # pad参数配置
 train_max_sent_len = int(conf.get('pad_arg', 'train_max_sent_len'))
 train_max_sent_num = int(conf.get('pad_arg', 'train_max_sent_num'))
@@ -65,8 +65,8 @@ if __name__ == "__main__":
         "test_max_sent_num": test_max_sent_num
     }
     if mode == "train":
-        doc2vecmodel = HAN(vocab_size, hanModel_wordEmbedSzie, hanModel_hiddenSize)
-        classificalmodel = classification(doc2vecmodel, num_tags, optimizer, lr_pl)
+        doc2vecmodel = UniDocInfoExtractor(vocab_size, uniDocModel_wordEmbedSize, uniDocModel_hiddenSize)
+        classificalmodel = Classification(doc2vecmodel, num_tags, optimizer, lr_pl)
         Operate = Operate(word2id, tag2label, doc2vecmodel, classificalmodel, path_dict, pad_dict)
         Operate.train(train_data_path, dev_data_path)
     if mode == "predict":
